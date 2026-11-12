@@ -1,3 +1,5 @@
+import { fold } from "../i18n/lang.js";
+
 const UNITS = [
   ["year", 31_536_000],
   ["month", 2_592_000],
@@ -62,7 +64,7 @@ export const hueOf = (name) => [...String(name)].reduce((h, c) => (h * 31 + c.ch
 
 // whether a video matches the search box, by title or channel name
 export const matches = (video, channelName, query) => {
-  const q = query.trim().toLowerCase();
+  const q = fold(query.trim());
   if (!q) return true;
-  return video.title.toLowerCase().includes(q) || channelName.toLowerCase().includes(q);
+  return fold(video.title).includes(q) || fold(channelName).includes(q);
 };

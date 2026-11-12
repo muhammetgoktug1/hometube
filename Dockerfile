@@ -3,6 +3,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+ARG HOMETUBE_LANG
+ENV NEXT_PUBLIC_HOMETUBE_LANG=$HOMETUBE_LANG
 RUN npm run build && npm prune --omit=dev
 
 FROM node:24-alpine
