@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import AddVideoDialog from "@/components/AddVideoDialog";
 import Icon from "@/components/Icon";
 import Logo from "@/components/Logo";
+import ProfileSwitch from "@/components/ProfileSwitch";
 
 // Store
 import useLibraryStore from "@/store/useLibraryStore";
@@ -55,6 +56,7 @@ const TopBar = () => {
           </span>
         )}
         <span className={Styles.status} data-connected={connected} title={connected ? "Connected to your server" : "Reconnecting…"} />
+        <ProfileSwitch />
         <AddVideoDialog />
       </div>
     </header>

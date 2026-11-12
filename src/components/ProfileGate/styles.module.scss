@@ -1,0 +1,329 @@
+// The profile screens: made for a TV across the room first (sizes follow the screen width, so a
+// 1920 px TV gets big tiles and type), then laptops and phones. Colors are the app's own variables.
+
+// ---- Avatar (a letter on the profile's color); its size comes from the class next to it
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  overflow: hidden;
+  color: #fff;
+  font-weight: 500;
+  line-height: 1;
+  user-select: none;
+}
+
+// ---- The page
+.gate {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 0 16px;
+  background: var(--bg);
+}
+
+.brand {
+  display: flex;
+  flex: none;
+  align-items: center;
+  height: var(--topbar);
+
+  // a TV: the word mark a size up, to sit with the big tiles
+  @media (min-width: 1600px) {
+    height: 88px;
+    padding-left: 16px;
+
+    > a { transform: scale(1.4); transform-origin: left center; }
+  }
+}
+
+.center {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0 clamp(32px, 4vw, 72px);
+  text-align: center;
+}
+
+.title {
+  margin: 0 0 clamp(28px, 3.4vw, 64px);
+  font-size: clamp(28px, 3vw, 56px);
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.notice {
+  margin: 0 0 clamp(20px, 2vw, 36px);
+  padding: clamp(10px, 0.75vw, 14px) clamp(16px, 1.3vw, 26px);
+  border-radius: 12px;
+  background: rgba(240, 165, 0, 0.18);
+  background: color-mix(in srgb, #f0a500 18%, transparent);
+  font-size: clamp(15px, 1vw, 20px);
+}
+
+// ---- Tiles
+.tiles {
+  --tile: clamp(132px, 12.5vw, 240px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(20px, 2.2vw, 44px) clamp(20px, 2.2vw, 44px);
+  max-width: 100%;
+
+  // phones: two to a row
+  @media (max-width: 640px) {
+    --tile: min(200px, calc((100vw - 32px - 20px) / 2));
+    gap: 24px 20px;
+  }
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(18px, 1.5vw, 30px);
+  width: var(--tile);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-2);
+  font-size: clamp(16px, 1.15vw, 24px);
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.face {
+  width: var(--tile);
+  height: var(--tile);
+  border-radius: calc(var(--tile) * 0.1);
+  font-size: calc(var(--tile) * 0.44);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.addFace {
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  color: var(--text-2);
+
+  svg { width: 34%; height: 34%; }
+}
+
+.name {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: color 0.15s;
+}
+
+.tile:hover .face { transform: scale(1.03); }
+.tile:hover .name { color: var(--text); }
+.tile:hover .addFace { background: var(--surface-hover); }
+
+// the remote's focus: a thick ring and a step forward, readable from the sofa
+.tile:focus .face {
+  transform: scale(1.06);
+  box-shadow: 0 0 0 4px var(--bg), 0 0 0 calc(4px + clamp(4px, 0.32vw, 6px)) var(--text);
+}
+
+.tile:focus .name { color: var(--text); font-weight: 500; }
+
+// phones: the ring alone (a step forward would touch the screen's edge)
+@media (max-width: 640px) {
+  .tile:focus .face, .tile:hover .face { transform: none; }
+}
+
+// a mouse click doesn't need the ring (browsers without :focus-visible skip this and keep it)
+.tile:focus:not(:focus-visible) .face { transform: none; box-shadow: none; }
+.tile:focus:not(:focus-visible) .name { font-weight: 400; }
+
+.hint {
+  max-width: 100%;
+  margin: clamp(32px, 3.4vw, 64px) 0 0;
+  padding: clamp(10px, 0.75vw, 14px) clamp(18px, 1.5vw, 28px);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: clamp(15px, 1vw, 20px);
+  line-height: 1.4;
+
+  span + span { color: var(--text-2); }
+
+  @media (max-width: 640px) { border-radius: 16px; }
+}
+
+// phones: the form starts at the top, where the keyboard leaves it in view
+@media (max-width: 640px) {
+  .gate[data-profile-gate="create"] .center { justify-content: flex-start; padding-top: 32px; }
+}
+
+.keys {
+  flex: none;
+  padding: 0 0 clamp(20px, 2.2vw, 40px);
+  color: var(--text-2);
+  font-size: clamp(14px, 0.95vw, 19px);
+  text-align: center;
+
+  // no arrow keys on a phone
+  @media (max-width: 640px) { display: none; }
+}
+
+// ---- Form: a profile's name and color
+.form {
+  --f-title: clamp(26px, 2.6vw, 48px);
+  --f-body: clamp(15px, 1.05vw, 21px);
+  --f-label: clamp(13px, 0.95vw, 18px);
+  --f-input: clamp(16px, 1.25vw, 24px);
+  --f-field: clamp(44px, 3.3vw, 64px);
+  --f-swatch: clamp(36px, 2.9vw, 56px);
+  --f-button: clamp(38px, 2.9vw, 56px);
+  --f-button-text: clamp(14px, 1vw, 20px);
+  --f-preview: clamp(88px, 8.4vw, 160px);
+  --f-gap: clamp(18px, 1.6vw, 30px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--f-gap);
+  width: min(max(780px, 46vw), 100%);
+  text-align: left;
+}
+
+.formTitle {
+  margin: 0;
+  font-size: var(--f-title);
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.intro {
+  margin: calc(var(--f-gap) * -0.5) 0 0;
+  color: var(--text-2);
+  font-size: var(--f-body);
+  line-height: 1.5;
+}
+
+.formBody {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--f-gap) * 1.2);
+  padding: var(--f-gap);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+
+  @media (max-width: 560px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.preview {
+  width: var(--f-preview);
+  height: var(--f-preview);
+  border-radius: calc(var(--f-preview) * 0.1);
+  font-size: calc(var(--f-preview) * 0.44);
+  transition: background 0.15s;
+}
+
+.fields {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--f-gap);
+  min-width: 0;
+  align-self: stretch;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  > span { color: var(--text-2); font-size: var(--f-label); font-weight: 500; }
+}
+
+.input {
+  width: 100%;
+  height: var(--f-field);
+  padding: 0 calc(var(--f-field) * 0.3);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  font-size: var(--f-input);
+  outline: none;
+
+  &:focus { border-color: #1c62b9; box-shadow: 0 0 0 2px #1c62b9; }
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--f-swatch) * 0.3);
+  padding: 4px;
+}
+
+.swatch {
+  display: grid;
+  place-items: center;
+  width: var(--f-swatch);
+  height: var(--f-swatch);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  outline: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+
+  svg { width: 50%; height: 50%; stroke-width: 2.6; }
+  &:hover { transform: scale(1.08); }
+
+  &:focus {
+    transform: scale(1.12);
+    box-shadow: 0 0 0 3px var(--bg), 0 0 0 calc(3px + clamp(3px, 0.25vw, 5px)) var(--text);
+  }
+
+  &:focus:not(:focus-visible) { transform: none; box-shadow: none; }
+}
+
+.alert {
+  margin: 0;
+  color: var(--brand);
+  font-size: var(--f-body);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.form .action {
+  height: var(--f-button);
+  padding: 0 calc(var(--f-button) * 0.5);
+  border-radius: calc(var(--f-button) / 2);
+  font-size: var(--f-button-text);
+
+  &:focus { outline: none; box-shadow: 0 0 0 3px var(--bg), 0 0 0 calc(3px + clamp(3px, 0.25vw, 5px)) var(--text); }
+  &:focus:not(:focus-visible) { box-shadow: none; }
+}
+
+// the same form inside a dialog or a settings row: the app's usual sizes
+.compact {
+  --f-title: 20px;
+  --f-body: 14px;
+  --f-label: 13px;
+  --f-input: 16px;
+  --f-field: 42px;
+  --f-swatch: 34px;
+  --f-button: 36px;
+  --f-button-text: 14px;
+  --f-preview: 64px;
+  --f-gap: 16px;
+  width: 100%;
+
+  .formBody { padding: 0; border: 0; }
+  .preview { border-radius: 50%; }
+}
+
+// ---- No name yet: a figure in the preview
+.figure { width: 56%; height: 56%; opacity: 0.85; }

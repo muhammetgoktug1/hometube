@@ -27,6 +27,7 @@ const DATA = [
   "[data-open] > p", // a video's description
   '[role="dialog"] b', // autoplay: the next video's title
   '[class*="_importTitle"]', // Get videos: titles on YouTube
+  "[data-profile-name]", // profile names and their initials
 ].join(",");
 // what the interface itself puts in those places when there is no name
 const FALLBACKS = new Set(["Unknown channel", "No description."]);

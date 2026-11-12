@@ -1,0 +1,102 @@
+// Settings › Profiles (the card itself comes from ../styles.module.scss)
+.rows {
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+
+  > li { padding: 10px 0; border-top: 1px solid var(--line); }
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.face {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 19px;
+}
+
+.who {
+  flex: 1;
+  min-width: 0;
+
+  b { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+}
+
+.buttons {
+  display: flex;
+  flex: none;
+  gap: 8px;
+
+  // phones: the buttons go under the name
+  @media (max-width: 560px) { width: 100%; padding-left: 58px; }
+}
+
+.delete[data-armed="true"] { background: var(--brand); color: #fff; }
+
+.edit {
+  margin: 12px 0 4px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.alert {
+  margin: 8px 0 0;
+  color: var(--brand);
+  font-size: 13px;
+}
+
+// this profile's share, right under the line it belongs to
+p.share.share { margin: -10px 0 16px; }
+
+// ---- The videos no profile has yet
+.orphans {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--surface);
+
+  > b { font-size: 15px; }
+  select { background: var(--surface); }
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  cursor: pointer;
+
+  input { flex: none; width: 18px; height: 18px; margin: 0; accent-color: var(--brand); }
+}
+
+.moveRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+
+  .alert { flex: 1; margin: 0; }
+}
+
+.move[data-armed="true"] { background: var(--brand-hover); }
+
+.done {
+  margin: 16px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(43, 166, 64, 0.15);
+  background: color-mix(in srgb, #2ba640 15%, transparent);
+  font-size: 14px;
+}

@@ -3,6 +3,7 @@ import Link from "next/link";
 
 // Hooks
 import useStorage from "@/hooks/useStorage";
+import { CLEANUP_NOTE, ProfileShare, useProfilesOn } from "./Profiles";
 
 // Utils
 import { fmtBytes } from "@/utils/shortcuts";
@@ -25,6 +26,7 @@ const TOP = 8;
 // How much room the library takes, per channel, and the rules that delete old videos.
 const Storage = ({ settings, save }) => {
   const { storage, cleaning, cleanNow } = useStorage(settings);
+  const profiles = useProfilesOn();
   const [all, setAll] = useState(false);
   const other = storage ? Math.max(0, storage.total - storage.free - storage.used) : 0;
   const pct = (bytes) => `${storage?.total ? (bytes / storage.total) * 100 : 0}%`;
@@ -40,6 +42,7 @@ const Storage = ({ settings, save }) => {
               HomeTube uses <b className={Styles.inline}>{fmtBytes(storage.used)}</b>
               {!!storage.total && ` · ${fmtBytes(storage.free)} free of ${fmtBytes(storage.total)}`}
             </p>
+            <ProfileShare mine={storage.mine} />
             {!!storage.total && (
               <>
                 <div className={Styles.disk} role="img" aria-label={`${fmtBytes(storage.used)} used by HomeTube, ${fmtBytes(storage.free)} free`}>
@@ -74,7 +77,7 @@ const Storage = ({ settings, save }) => {
       <section className={Styles.card}>
         <h2>Cleanup</h2>
         <p>Deletes old videos on its own to make room. It runs every hour, so there's time to change your mind after picking a rule.</p>
-        {settings.cleanupLocked && <p className={Styles.note}>Automatic deletion is turned off on this server.</p>}
+        {settings.cleanupLocked && <p className={Styles.note}>{profiles ? CLEANUP_NOTE : "Automatic deletion is turned off on this server."}</p>}
         <label className={Styles.row}>
           <span>
             <b>Delete watched videos</b>

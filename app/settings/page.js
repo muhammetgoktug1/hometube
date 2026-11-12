@@ -4,6 +4,7 @@
 import AppShell from "@/components/AppShell";
 
 // Partials
+import Profiles from "./partials/Profiles";
 import Storage from "./partials/Storage";
 
 // Hooks
@@ -42,6 +43,7 @@ const Settings = () => {
           </span>
         </header>
 
+        <Profiles />
         {settings && (
           <>
             <section className={Styles.card}>

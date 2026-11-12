@@ -1,0 +1,131 @@
+// ---- The avatar in the top bar
+.trigger {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  outline: none;
+
+  &:hover { background: var(--surface); }
+  &:focus { box-shadow: 0 0 0 2px var(--bg), 0 0 0 5px var(--text); }
+  &:focus:not(:focus-visible) { box-shadow: none; }
+}
+
+.triggerFace {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 15px;
+}
+
+// ---- The menu: under the top bar, at its right end, like an account menu
+.menu {
+  position: fixed;
+  top: calc(var(--topbar) - 4px);
+  right: 16px;
+  bottom: auto;
+  left: auto;
+  width: min(340px, calc(100vw - 32px));
+  max-height: calc(100vh - var(--topbar) - 16px);
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+  box-shadow: var(--shadow);
+
+  &::backdrop { background: rgba(0, 0, 0, 0.35); }
+
+  ul { margin: 0; padding: 0; list-style: none; }
+}
+
+.list { padding: 8px; }
+
+.sheet { padding: 20px 20px 16px; }
+
+.label {
+  margin: 0;
+  padding: 8px 12px 10px;
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+  height: 52px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  font-size: 15px;
+  text-align: left;
+  outline: none;
+
+  &:hover { background: var(--surface); }
+
+  &:focus {
+    background: var(--surface);
+    box-shadow: inset 0 0 0 3px var(--text);
+  }
+
+  &:focus:not(:focus-visible) { box-shadow: none; }
+
+  &[data-current="true"] { font-weight: 500; }
+}
+
+.itemFace {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 16px;
+}
+
+.itemIcon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  color: var(--text-2);
+}
+
+.itemName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.check { display: grid; flex: none; color: var(--text-2); }
+
+.more {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+// phones: the avatar takes the room of the add button's words, which leaves their "+" (the top bar fits)
+@media (max-width: 520px) {
+  .menu + :global(.btn) { gap: 0; padding: 0 9px; font-size: 0; }
+}
+
+// a TV across the room: the same menu, a size up
+@media (min-width: 1600px) {
+  .menu { width: 400px; }
+  .label { font-size: 16px; }
+  .item { height: 64px; gap: 16px; font-size: 19px; }
+  .itemFace, .itemIcon { width: 44px; height: 44px; font-size: 20px; }
+}
