@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import next from "next";
 import mongoose from "mongoose";
 import { Server } from "socket.io";
-import { MONGODB_URI, PORT, MEDIA_DIR } from "./lib/config.js";
+import { MONGODB_URI, PORT, MEDIA_DIR, NO_AUTO_DELETE } from "./lib/config.js";
 import { Channel, Category, Video, Settings, getSettings, QUALITIES, RATE_LIMITS, SYNC_HOURS, DELETE_DAYS, KEEP_COUNTS } from "./lib/models.js";
 import { serveMedia, mediaDir, channelDir } from "./lib/media.js";
 import { startQueue, enqueue, cancel, progress, stopRunning, wakeWaiting, resume } from "./lib/queue.js";
@@ -267,7 +267,9 @@ function wire(io) {
         DELETE_DAYS.includes(deleteWatchedDays) &&
         KEEP_COUNTS.includes(keepPerChannel);
       if (!known) return ack({ error: "Unknown setting." });
-      const update = { quality, rateLimit, compatible: !!data.compatible, syncHours, deleteWatchedDays, keepPerChannel };
+      // a locked cleanup saves its rules as off, so nothing picked meanwhile comes on when the lock is lifted
+      const rules = NO_AUTO_DELETE ? { deleteWatchedDays: 0, keepPerChannel: 0 } : { deleteWatchedDays, keepPerChannel };
+      const update = { quality, rateLimit, compatible: !!data.compatible, syncHours, ...rules };
       await Settings.updateOne({ key: "app" }, update, { upsert: true });
       const settings = await getSettings();
       ack(settings);

@@ -74,12 +74,13 @@ const Storage = ({ settings, save }) => {
       <section className={Styles.card}>
         <h2>Cleanup</h2>
         <p>Deletes old videos on its own to make room. It runs every hour, so there's time to change your mind after picking a rule.</p>
+        {settings.cleanupLocked && <p className={Styles.note}>Automatic deletion is turned off on this server.</p>}
         <label className={Styles.row}>
           <span>
             <b>Delete watched videos</b>
             <small>Counted from the last time a video was played.</small>
           </span>
-          <select value={settings.deleteWatchedDays} onChange={(e) => save({ deleteWatchedDays: Number(e.target.value) })}>
+          <select value={settings.deleteWatchedDays} disabled={settings.cleanupLocked} onChange={(e) => save({ deleteWatchedDays: Number(e.target.value) })}>
             {DELETE_DAYS.map(([days, label]) => (
               <option key={days} value={days}>
                 {label}
@@ -92,7 +93,7 @@ const Storage = ({ settings, save }) => {
             <b>Videos kept per channel</b>
             <small>Only each channel's newest videos stay, and as many of its newest Shorts.</small>
           </span>
-          <select value={settings.keepPerChannel} onChange={(e) => save({ keepPerChannel: Number(e.target.value) })}>
+          <select value={settings.keepPerChannel} disabled={settings.cleanupLocked} onChange={(e) => save({ keepPerChannel: Number(e.target.value) })}>
             {KEEP_COUNTS.map((n) => (
               <option key={n} value={n}>
                 {n ? `Newest ${n}` : "All"}

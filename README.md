@@ -95,6 +95,7 @@ All three variables are required; the app exits with `missing env X` if one is a
 | `MONGODB_URI` | `mongodb://localhost:27017/hometube` |
 | `PORT`        | `3100`                               |
 | `MEDIA_DIR`   | `./media`                            |
+| `HOMETUBE_NO_AUTO_DELETE` | `1` (optional: turns automatic cleanup off and locks its rules on the Settings page) |
 
 ## Local development
 

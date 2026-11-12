@@ -92,6 +92,8 @@
   border: 1px solid var(--line);
   border-radius: 18px;
   background: var(--bg);
+
+  &:disabled { opacity: 0.5; cursor: default; }
 }
 
 // a value inside a sentence, not on a line of its own like the labels' <b>
