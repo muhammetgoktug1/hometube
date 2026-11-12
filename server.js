@@ -10,6 +10,7 @@ import { startQueue, enqueue, cancel, progress, stopRunning, wakeWaiting, resume
 import { startSync, followChannel, checkChannel } from "./lib/sync.js";
 import { startCleanup, runCleanup, storage } from "./lib/cleanup.js";
 import { videoIdOf, channelShortsOf, watchUrl, probe, videoFields, channelInfo, channelVideos, isBotCheck, isMembersOnly } from "./lib/youtube.js";
+import { startDupes } from "./lib/dupes.js";
 
 const dev = process.argv.includes("--dev");
 const app = next({ dev });
@@ -389,6 +390,7 @@ avatarQueue.onSaved = changed;
 await startQueue(io, changed);
 startSync({ queueUploads, enqueue, changed });
 startCleanup(removeVideo, changed);
+startDupes(io);
 // channels saved before avatars existed, or whose avatar failed last time
 (await Channel.find({ avatar: { $ne: true } }).lean()).forEach((c) => avatarQueue.push(c));
 

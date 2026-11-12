@@ -6,8 +6,8 @@ COPY . .
 RUN npm run build && npm prune --omit=dev
 
 FROM node:24-alpine
-# yt-dlp needs python; ffmpeg merges video + audio and converts thumbnails
-RUN apk add --no-cache ffmpeg python3 \
+# yt-dlp needs python; ffmpeg merges video + audio and converts thumbnails; fpcalc (chromaprint) fingerprints the audio
+RUN apk add --no-cache ffmpeg python3 chromaprint \
   && wget -qO /usr/local/bin/yt-dlp https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp \
   && chmod +x /usr/local/bin/yt-dlp
 WORKDIR /app
