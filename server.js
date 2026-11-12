@@ -11,6 +11,7 @@ import { startSync, followChannel, checkChannel } from "./lib/sync.js";
 import { startCleanup, runCleanup, storage } from "./lib/cleanup.js";
 import { videoIdOf, channelShortsOf, watchUrl, probe, videoFields, channelInfo, channelVideos, isBotCheck, isMembersOnly } from "./lib/youtube.js";
 import { startDupes } from "./lib/dupes.js";
+import { startProfiles } from "./lib/profiles.js";
 
 const dev = process.argv.includes("--dev");
 const app = next({ dev });
@@ -234,7 +235,7 @@ const avatarQueue = {
 };
 
 function wire(io) {
-  const broadcast = async () => io.emit("library", await library());
+  const broadcast = profiles.broadcast || (async () => io.emit("library", await library()));
 
   io.on("connection", (socket) => {
     socket.on("library", async (ack) => ack(await library()));
@@ -386,11 +387,12 @@ const server = createServer((req, res) => {
   handle(req, res);
 });
 const io = new Server(server);
+const profiles = startProfiles(io, { library, queueUploads, removeVideo });
 const broadcast = wire(io);
 const changed = () => broadcast().catch((err) => console.error("broadcast failed", err));
 avatarQueue.onSaved = changed;
 await startQueue(io, changed);
-startSync({ queueUploads, enqueue, changed });
+startSync({ queueUploads: profiles.queueUploads || queueUploads, enqueue, changed });
 startCleanup(removeVideo, changed);
 startDupes(io);
 // channels saved before avatars existed, or whose avatar failed last time

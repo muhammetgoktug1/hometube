@@ -97,6 +97,7 @@ All three variables are required; the app exits with `missing env X` if one is a
 | `MEDIA_DIR`   | `./media`                            |
 | `HOMETUBE_NO_AUTO_DELETE` | `1` (optional: turns automatic cleanup off and locks its rules on the Settings page) |
 | `HOMETUBE_LANG` | `tr` (optional build argument, under `build.args` in Compose: shows the interface in Turkish) |
+| `HOMETUBE_PROFILES` | `1` (optional: everyone at home gets their own videos, categories and follows; the cleanup rules stay off while it's on) |
 
 ## Local development
 
