@@ -1,0 +1,123 @@
+// The add dialog's playlist part (PlaylistStep.js): in the place of the dialog's hint, on the same grey surfaces
+// as the rest of the app; the focused choice gets the profile screen's white ring.
+
+.reading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.spinner {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--surface-hover);
+  border-top-color: var(--text);
+  border-radius: 50%;
+  animation: playlistSpin 0.8s linear infinite;
+}
+
+@keyframes playlistSpin { to { transform: rotate(360deg); } }
+
+.notice {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 4px 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--surface);
+
+  p { margin: 0; font-size: 14px; line-height: 1.45; }
+  button { grid-column: 2; justify-self: start; margin-top: 8px; background: var(--surface-hover); }
+}
+
+.noticeIcon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ask { display: flex; flex-direction: column; gap: 12px; }
+
+.question { margin: 0; font-size: 15px; font-weight: 500; }
+
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--surface);
+  text-align: left;
+  outline: none;
+  transition: background 0.15s;
+
+  &:hover { background: var(--surface-hover); }
+  &:focus { background: var(--surface-hover); box-shadow: 0 0 0 3px var(--text); }
+  &:focus:not(:focus-visible) { box-shadow: none; }
+
+  em {
+    align-self: flex-start;
+    margin-top: 2px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text-2);
+    font-size: 12px;
+    font-style: normal;
+  }
+}
+
+.choiceIcon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg);
+}
+
+.choiceText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+
+  b { font-size: 15px; font-weight: 500; }
+}
+
+// a video's or a playlist's own title: kept as YouTube has it (the language layer leaves *_importTitle* alone)
+.importTitleVideo, .importTitleList {
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.fresh { color: var(--text); font-size: 13px; }
+
+.askHint { margin: 0; color: var(--text-2); font-size: 13px; }
+
+@media (max-width: 520px) {
+  .choices { grid-template-columns: 1fr; }
+}

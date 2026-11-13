@@ -11,10 +11,14 @@ import useLibraryStore from "@/store/useLibraryStore";
 // Utils
 import { getSocket } from "@/utils/socket";
 
+// Playlists (only while the server offers them)
+import { usePlaylistStep } from "./PlaylistStep";
+
 // Styles
 import Styles from "@/styles/dialog.module.scss";
 
-// A trigger button plus the dialog that saves a YouTube video or Short, or every Short of a channel, to the library.
+// A trigger button plus the dialog that saves a YouTube video or Short, or every Short of a channel, to the library;
+// while the server offers playlists, a playlist link opens the picker for its videos (PlaylistStep).
 const AddVideoDialog = ({ label = "Add video / Shorts", primary }) => {
   const dialog = useRef();
   const titleId = useId();
@@ -28,13 +32,14 @@ const AddVideoDialog = ({ label = "Add video / Shorts", primary }) => {
     setUrl("");
     setCategory("");
     setError("");
+    playlist.reset();
     dialog.current.showModal();
   };
 
   const close = () => dialog.current.close();
 
-  const submit = (e) => {
-    e.preventDefault();
+  const addVideo = () => {
+    playlist.reset();
     setBusy(true);
     setError("");
     getSocket().emit("video:add", { url, category }, (res) => {
@@ -42,6 +47,15 @@ const AddVideoDialog = ({ label = "Add video / Shorts", primary }) => {
       if (res.error) return setError(res.error);
       close();
     });
+  };
+
+  const playlist = usePlaylistStep({ url, category, addVideo, close });
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (playlist.reading) return;
+    // Enter while asked about a video inside a playlist: just this video, as before
+    if (playlist.asking || !playlist.take()) addVideo();
   };
 
   return (
@@ -53,7 +67,7 @@ const AddVideoDialog = ({ label = "Add video / Shorts", primary }) => {
       <dialog ref={dialog} className={Styles.dialog} aria-labelledby={titleId} onClick={(e) => e.target === dialog.current && close()}>
         <form className={Styles.sheet} onSubmit={submit}>
           <header className={Styles.head}>
-            <h2 id={titleId}>Add a video or Shorts</h2>
+            <h2 id={titleId}>{playlist.on ? "Add a video, Shorts or playlist" : "Add a video or Shorts"}</h2>
             <button type="button" className={Styles.close} onClick={close} aria-label="Close">
               <Icon name="close" size={20} />
             </button>
@@ -66,9 +80,12 @@ const AddVideoDialog = ({ label = "Add video / Shorts", primary }) => {
               inputMode="url"
               required
               autoFocus
-              placeholder="Video, Short or youtube.com/@channel/shorts link"
+              placeholder={playlist.on ? "Video, Short, playlist or youtube.com/@channel/shorts link" : "Video, Short or youtube.com/@channel/shorts link"}
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              onChange={(e) => {
+                setUrl(e.target.value);
+                playlist.reset();
+              }}
             />
           </label>
 
@@ -86,18 +103,24 @@ const AddVideoDialog = ({ label = "Add video / Shorts", primary }) => {
             </label>
           )}
 
-          <p className={error ? Styles.error : Styles.hint}>
-            {error ||
-              "A video shows up on the home page and a Short in Shorts once it's downloaded. A channel's Shorts link (youtube.com/@name/shorts) saves all of its Shorts."}
-          </p>
+          {playlist.view || (
+            <p className={error ? Styles.error : Styles.hint}>
+              {error ||
+                (playlist.on
+                  ? "A video shows up on the home page and a Short in Shorts once it's downloaded. A playlist link shows its videos so you can pick which to save; a channel's Shorts link (youtube.com/@name/shorts) saves all of its Shorts."
+                  : "A video shows up on the home page and a Short in Shorts once it's downloaded. A channel's Shorts link (youtube.com/@name/shorts) saves all of its Shorts.")}
+            </p>
+          )}
 
           <footer className={Styles.foot}>
             <button type="button" className="btn" onClick={close}>
               Cancel
             </button>
-            <button className="btnBrand" disabled={busy}>
-              {busy ? "Fetching…" : "Fetch"}
-            </button>
+            {!playlist.asking && (
+              <button className="btnBrand" disabled={busy || playlist.reading}>
+                {busy || playlist.reading ? "Fetching…" : "Fetch"}
+              </button>
+            )}
           </footer>
         </form>
       </dialog>

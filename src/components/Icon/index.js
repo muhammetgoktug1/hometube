@@ -47,6 +47,24 @@ const PATHS = {
       <circle cx="9" cy="17" r="2" />
     </>
   ),
+  playlist: (
+    <>
+      <path d="M4 6.5h12M4 11.5h12M4 16.5h6.5" />
+      <path d="M15 14.5v5.5l4.5-2.75z" />
+    </>
+  ),
+  info: (
+    <>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 11v5M12 8.2v.1" />
+    </>
+  ),
+  blocked: (
+    <>
+      <circle cx="12" cy="12" r="7.5" />
+      <path d="M6.7 17.3L17.3 6.7" />
+    </>
+  ),
 };
 
 const Icon = ({ name, size = 24 }) => (
