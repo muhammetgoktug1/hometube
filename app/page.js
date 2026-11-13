@@ -12,10 +12,12 @@ import VideoGrid from "@/components/VideoGrid";
 import CategoryChips from "./partials/CategoryChips";
 
 // Store
+import useDupeStore from "@/store/useDupeStore";
 import useLibraryStore from "@/store/useLibraryStore";
 import useUiStore from "@/store/useUiStore";
 
 // Utils
+import { groupOrder, warns } from "@/utils/dupes";
 import { mixFeed } from "@/utils/feed";
 import { matches } from "@/utils/shortcuts";
 
@@ -28,10 +30,12 @@ const Home = () => {
   // picked once per visit: "All" is mixed differently each time you come back, but holds still meanwhile
   const [seed] = useState(() => Math.floor(Math.random() * 2 ** 32));
   const channelName = (id) => channels.find((c) => c.id === id)?.name || "";
+  // the Duplicates chip: only videos whose content is also in another one, related ones side by side
+  const { only, videos: dupes } = useDupeStore();
   // Shorts live in the Shorts player
-  const found = videos.filter((v) => !v.short && (!category || v.category === category) && matches(v, channelName(v.channel), query));
+  const found = videos.filter((v) => !v.short && (!category || v.category === category) && matches(v, channelName(v.channel), query) && (!only || warns(dupes[v.id])));
   // categories and search results stay newest first, as the server sends them
-  const shown = !category && !query.trim() ? mixFeed(found, seed) : found;
+  const shown = only ? groupOrder(found, dupes) : !category && !query.trim() ? mixFeed(found, seed) : found;
 
   return (
     <AppShell>

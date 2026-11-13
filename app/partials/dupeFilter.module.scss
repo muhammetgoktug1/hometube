@@ -1,0 +1,32 @@
+// After the categories, set apart by a thin line; the button itself is a chip like the others (app/styles.module.scss).
+.wrap {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 12px;
+
+  &::before {
+    content: "";
+    width: 1px;
+    height: 20px;
+    background: var(--line);
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  // on: the same as a picked chip
+  button[aria-pressed="true"],
+  button[aria-pressed="true"]:hover { background: var(--chip-active-bg); color: var(--chip-active-text); }
+
+  small {
+    color: var(--text-2);
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  button[aria-pressed="true"] small { color: inherit; opacity: 0.65; }
+}

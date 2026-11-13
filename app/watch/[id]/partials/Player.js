@@ -9,6 +9,7 @@ import useLibraryStore from "@/store/useLibraryStore";
 
 // Utils
 import { getSocket } from "@/utils/socket";
+import { startParam } from "@/utils/dupes";
 import { resumeAt } from "@/utils/playback";
 import { nextInChannel } from "@/utils/upNext";
 
@@ -59,7 +60,8 @@ const Player = ({ video }) => {
   }, []);
 
   const loaded = (e) => {
-    const at = resumeAt(startAt.current || 0, e.currentTarget.duration);
+    // a link with ?t= (the "Also in your library" box) starts where the shared part does
+    const at = startParam(window.location.search, e.currentTarget.duration) ?? resumeAt(startAt.current || 0, e.currentTarget.duration);
     if (at) e.currentTarget.currentTime = at;
     savedAt.current = at;
   };

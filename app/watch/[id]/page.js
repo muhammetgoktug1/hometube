@@ -11,6 +11,7 @@ import Icon from "@/components/Icon";
 // Partials
 import DeleteButton from "./partials/DeleteButton";
 import Description from "./partials/Description";
+import DupeNotice from "./partials/DupeNotice";
 import Player from "./partials/Player";
 import UpNext from "./partials/UpNext";
 
@@ -104,6 +105,7 @@ const Watch = () => {
             </div>
           </div>
 
+          <DupeNotice key={id} video={video} />
           <Description video={video} />
         </div>
 

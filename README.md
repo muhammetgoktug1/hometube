@@ -98,6 +98,7 @@ All three variables are required; the app exits with `missing env X` if one is a
 | `HOMETUBE_NO_AUTO_DELETE` | `1` (optional: turns automatic cleanup off and locks its rules on the Settings page) |
 | `HOMETUBE_LANG` | `tr` (optional build argument, under `build.args` in Compose: shows the interface in Turkish) |
 | `HOMETUBE_PROFILES` | `1` (optional: everyone at home gets their own videos, categories and follows; the cleanup rules stay off while it's on) |
+| `HOMETUBE_DUPES` | `1` (optional: finds videos whose content is already in the library and says so on the card and the video's page; it never deletes anything) |
 
 ## Local development
 

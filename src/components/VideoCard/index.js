@@ -5,6 +5,7 @@ import Link from "next/link";
 
 // Components
 import ChannelAvatar from "@/components/ChannelAvatar";
+import DupeBadge from "@/components/DupeBadge";
 import Icon from "@/components/Icon";
 
 // Store
@@ -84,6 +85,7 @@ const VideoCard = ({ video, compact }) => {
             {ready && !!video.size && ` · ${fmtBytes(video.size)}`}
             {category && ` · ${category.name}`}
           </span>
+          {!compact && <DupeBadge video={video} />}
           {video.status === "failed" && (
             <span className={Styles.error} title={video.error}>
               {video.membersOnly ? "Only the channel's members can watch this on YouTube" : video.error}

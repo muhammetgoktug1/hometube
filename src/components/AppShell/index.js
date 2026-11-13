@@ -6,6 +6,7 @@ import Sidebar from "@/components/Sidebar";
 import TopBar from "@/components/TopBar";
 
 // Hooks
+import useDupes from "@/hooks/useDupes";
 import useLibrarySync from "@/hooks/useLibrarySync";
 
 // Store
@@ -18,6 +19,7 @@ import Styles from "./styles.module.scss";
 // theater: the page runs edge to edge and the sidebar only opens as an overlay, like a cinema view.
 const AppShell = ({ children, theater }) => {
   useLibrarySync();
+  useDupes();
   const sidebarToggled = useUiStore((state) => state.sidebarToggled);
   // while profiles are on, the profile screen stands in for everything until this device picks one
   const gate = useProfileGate();
