@@ -12,6 +12,7 @@ import { startCleanup, runCleanup, storage } from "./lib/cleanup.js";
 import { videoIdOf, channelShortsOf, watchUrl, probe, videoFields, channelInfo, channelVideos, isBotCheck, isMembersOnly } from "./lib/youtube.js";
 import { startDupes } from "./lib/dupes.js";
 import { startProfiles } from "./lib/profiles.js";
+import { startPlaylists } from "./lib/playlists.js";
 
 const dev = process.argv.includes("--dev");
 const app = next({ dev });
@@ -395,6 +396,7 @@ await startQueue(io, changed);
 startSync({ queueUploads: profiles.queueUploads || queueUploads, enqueue, changed });
 startCleanup(removeVideo, changed);
 startDupes(io);
+startPlaylists(io, { queueUploads, enqueue, changed, avatarQueue });
 // channels saved before avatars existed, or whose avatar failed last time
 (await Channel.find({ avatar: { $ne: true } }).lean()).forEach((c) => avatarQueue.push(c));
 
