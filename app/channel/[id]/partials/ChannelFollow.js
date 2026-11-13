@@ -10,7 +10,8 @@ import { getSocket } from "@/utils/socket";
 import Styles from "../styles.module.scss";
 
 // Follows the channel: its new videos and Shorts download on their own from now on.
-const ChannelFollow = ({ channel }) => {
+// Other props (data-grownup) go on the button.
+const ChannelFollow = ({ channel, ...props }) => {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -36,6 +37,7 @@ const ChannelFollow = ({ channel }) => {
         onClick={toggle}
         disabled={busy}
         aria-pressed={channel.follow}
+        {...props}
         title={
           channel.follow
             ? "New uploads download on their own. Click to stop following."

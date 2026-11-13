@@ -33,7 +33,8 @@ const buttonLabel = (busy, n, tab) => {
 };
 
 // Lists the channel's uploads (videos or Shorts) on YouTube; the picked ones that aren't saved yet are queued for download.
-const ChannelImport = ({ channel }) => {
+// Other props (data-grownup) go on the button that opens it.
+const ChannelImport = ({ channel, ...props }) => {
   const dialog = useRef();
   const titleId = useId();
   const { categories, videos: library } = useLibraryStore();
@@ -100,7 +101,7 @@ const ChannelImport = ({ channel }) => {
 
   return (
     <>
-      <button type="button" className="btnPrimary" onClick={open}>
+      <button type="button" className="btnPrimary" onClick={open} {...props}>
         <Icon name="download" size={20} /> Get videos
       </button>
 

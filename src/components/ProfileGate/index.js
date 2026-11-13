@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 // Components
 import Icon from "@/components/Icon";
+import { KidsBadge } from "@/components/Kids";
 import Logo from "@/components/Logo";
 import Avatar from "./Avatar";
 import ProfileForm from "./ProfileForm";
@@ -56,7 +57,14 @@ const Pick = ({ list, orphans, notice, focusAdd, onPick, onAdd }) => {
             onClick={() => onPick(p)}
             data-profile-tile={p.id}
           >
-            <Avatar name={p.name} color={p.color} className={Styles.face} />
+            {p.kid ? (
+              <span className={Styles.kidFace}>
+                <Avatar name={p.name} color={p.color} className={Styles.face} />
+                <KidsBadge className={Styles.kidBadge} />
+              </span>
+            ) : (
+              <Avatar name={p.name} color={p.color} className={Styles.face} />
+            )}
             <span className={Styles.name} data-profile-name>
               {p.name}
             </span>

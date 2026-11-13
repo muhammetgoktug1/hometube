@@ -5,8 +5,14 @@ import Icon from "@/components/Icon";
 import Avatar from "@/components/ProfileGate/Avatar";
 import ProfileForm from "@/components/ProfileGate/ProfileForm";
 
+// Hooks
+import { useKids } from "@/hooks/useKids";
+
 // Store
 import useProfileStore from "@/store/useProfileStore";
+
+// Partials
+import KidsToggle from "./KidsToggle";
 
 // Utils
 import { plural } from "@/utils/profile";
@@ -113,9 +119,16 @@ const Profiles = () => {
   const [editing, setEditing] = useState("");
   const [armed, arm, disarm] = useTwoClicks();
   const [problem, setProblem] = useState(["", ""]);
+  // a kids profile mark the server turned down: [profile id, its message]
+  const [kidProblem, setKidProblem] = useState(["", ""]);
+  // a kids profile with its parent lock open: marking and deleting profiles stay with a grown-up's profile
+  // (the server keeps refusing them), so neither is drawn
+  const grownUpOnly = useKids() === "unlocked";
 
   if (!state) return null;
   const list = state.list || [];
+  // kids profiles are on when the server marks every profile one way or the other
+  const kidsOn = list.some((p) => typeof p.kid === "boolean");
 
   const save = async (id, name, color) => {
     const error = await update(id, { name, color });
@@ -143,18 +156,27 @@ const Profiles = () => {
                 <b data-profile-name>{p.name}</b>
                 <small>{plural(p.videos, "{n} saved video", "{n} saved videos")}</small>
               </span>
+              {!grownUpOnly && <KidsToggle profile={p} onAnswer={(error) => setKidProblem([p.id, error])} />}
               <span className={Own.buttons}>
                 <button type="button" className="btn" aria-expanded={editing === p.id} onClick={() => setEditing(editing === p.id ? "" : p.id)}>
                   Rename
                 </button>
-                <button type="button" className={`btn ${Own.delete}`} data-armed={armed === p.id} onClick={() => del(p.id)}>
-                  <Icon name="trash" size={20} /> {armed === p.id ? "Click again to delete" : "Delete profile"}
-                </button>
+                {!grownUpOnly && (
+                  <button type="button" className={`btn ${Own.delete}`} data-armed={armed === p.id} onClick={() => del(p.id)}>
+                    <Icon name="trash" size={20} /> {armed === p.id ? "Click again to delete" : "Delete profile"}
+                  </button>
+                )}
               </span>
             </div>
             {problem[0] === p.id && problem[1] && (
               <p className={Own.alert} role="alert">
                 {problem[1]}
+              </p>
+            )}
+            {kidProblem[0] === p.id && kidProblem[1] && (
+              <p className={Own.kidsNote} role="status" data-kids-error>
+                <Icon name="info" size={18} />
+                <span>{kidProblem[1]}</span>
               </p>
             )}
             {editing === p.id && (
@@ -171,7 +193,16 @@ const Profiles = () => {
           </li>
         ))}
       </ul>
-      <small>Videos only this profile has stay on the server and become unassigned.</small>
+      {grownUpOnly ? (
+        <small className={Own.kidsHint} data-kids-grownup-only>
+          Marking a kids profile and deleting profiles are done from a grown-up's profile.
+        </small>
+      ) : (
+        <>
+          {kidsOn && <small className={Own.kidsHint}>A kids profile can't add, delete or change settings. Its parent lock is in its profile menu.</small>}
+          <small>Videos only this profile has stay on the server and become unassigned.</small>
+        </>
+      )}
       <Orphans count={state.orphans} list={list} current={state.current?.id} />
     </section>
   );

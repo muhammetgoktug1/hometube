@@ -47,6 +47,10 @@
   &:hover .count, &:focus-within .count { visibility: hidden; }
 }
 
+// a kids profile has no delete button to make room for: the count stays
+:global(html[data-kids="locked"]) .row:hover .count,
+:global(html[data-kids="locked"]) .row:focus-within .count { visibility: visible; }
+
 .count {
   flex: none;
   margin-left: auto;

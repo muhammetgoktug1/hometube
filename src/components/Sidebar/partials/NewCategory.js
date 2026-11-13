@@ -10,7 +10,8 @@ import { getSocket } from "@/utils/socket";
 import Styles from "../styles.module.scss";
 
 // "New category" turns into a name field; Enter creates it, Escape or leaving the field cancels.
-const NewCategory = () => {
+// Other props (data-grownup) go on its root.
+const NewCategory = (props) => {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
 
@@ -30,14 +31,14 @@ const NewCategory = () => {
 
   if (!editing) {
     return (
-      <button type="button" className={Styles.item} onClick={() => setEditing(true)}>
+      <button type="button" className={Styles.item} onClick={() => setEditing(true)} {...props}>
         <Icon name="plus" size={22} />
         <span>New category</span>
       </button>
     );
   }
   return (
-    <form className={Styles.newCategory} onSubmit={submit}>
+    <form className={Styles.newCategory} onSubmit={submit} {...props}>
       <input
         autoFocus
         maxLength={40}

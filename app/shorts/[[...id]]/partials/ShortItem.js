@@ -3,7 +3,11 @@ import Link from "next/link";
 
 // Components
 import ChannelAvatar from "@/components/ChannelAvatar";
+import GrownUp from "@/components/GrownUp";
 import Icon from "@/components/Icon";
+
+// Hooks
+import { useKids } from "@/hooks/useKids";
 
 // Utils
 import { getSocket } from "@/utils/socket";
@@ -18,6 +22,8 @@ const ShortItem = ({ video, channel, active, near, muted, setMuted, register }) 
   const [paused, setPaused] = useState(false);
   const [progress, setProgress] = useState(0);
   const reported = useRef(false);
+  // a kids profile's Details page has no category or delete, and its video no Download in the browser's menu
+  const kids = useKids() === "locked";
 
   useEffect(() => {
     const el = ref.current;
@@ -68,6 +74,7 @@ const ShortItem = ({ video, channel, active, near, muted, setMuted, register }) 
             poster={`/media/${video.id}/thumb.jpg`}
             loop
             playsInline
+            controlsList={kids ? "nodownload" : undefined}
             preload="auto"
             onPlay={played}
             onPause={() => setPaused(true)}
@@ -107,14 +114,16 @@ const ShortItem = ({ video, channel, active, near, muted, setMuted, register }) 
       </div>
 
       <div className={Styles.side}>
-        <Link href={`/watch/${video.id}`} className={Styles.sideButton} title="Details, category and delete">
+        <Link href={`/watch/${video.id}`} className={Styles.sideButton} title={kids ? "Details" : "Details, category and delete"}>
           <Icon name="tag" size={22} />
           <small>Details</small>
         </Link>
-        <a href={video.url} target="_blank" rel="noreferrer" className={Styles.sideButton} title="Open on YouTube">
-          <Icon name="external" size={22} />
-          <small>YouTube</small>
-        </a>
+        <GrownUp name="shorts-youtube">
+          <a href={video.url} target="_blank" rel="noreferrer" className={Styles.sideButton} title="Open on YouTube">
+            <Icon name="external" size={22} />
+            <small>YouTube</small>
+          </a>
+        </GrownUp>
       </div>
     </div>
   );

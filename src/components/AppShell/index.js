@@ -8,6 +8,7 @@ import TopBar from "@/components/TopBar";
 
 // Hooks
 import useDupes from "@/hooks/useDupes";
+import useKidsShell from "@/hooks/useKids";
 import useLibrarySync from "@/hooks/useLibrarySync";
 import usePlaylists from "@/hooks/usePlaylists";
 
@@ -24,6 +25,8 @@ const AppShell = ({ children, theater }) => {
   useLibrarySync();
   useDupes();
   usePlaylists();
+  // kids profiles: the parent lock and <html data-kids>; nothing without them
+  useKidsShell();
   const sidebarToggled = useUiStore((state) => state.sidebarToggled);
   // the playlist picker exists only once the server has said it offers playlists
   const playlists = usePlaylistStore((state) => state.on);

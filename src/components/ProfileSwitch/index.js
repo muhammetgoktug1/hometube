@@ -4,7 +4,9 @@ import { useId, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 // Components
+import GrownUp from "@/components/GrownUp";
 import Icon from "@/components/Icon";
+import { KidsBadge, LockQuestion, LockRow } from "@/components/Kids";
 import Avatar from "@/components/ProfileGate/Avatar";
 import ProfileForm from "@/components/ProfileGate/ProfileForm";
 
@@ -19,6 +21,7 @@ import Styles from "./styles.module.scss";
 
 // Who's watching, in the top bar: the avatar opens a list of the profiles to switch to without
 // reloading the page, one to add a profile and the way to Settings › Profiles. Only while profiles are on.
+// A kids profile gets the parent lock there instead of adding and managing (asking: its question).
 const ProfileSwitch = () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -26,6 +29,7 @@ const ProfileSwitch = () => {
   const titleId = useId();
   const { state, pick, add } = useProfileStore();
   const [adding, setAdding] = useState(false);
+  const [asking, setAsking] = useState(false);
   const [open, setOpen] = useState(false);
 
   if (!state?.current) return null;
@@ -33,6 +37,7 @@ const ProfileSwitch = () => {
 
   const show = () => {
     setAdding(false);
+    setAsking(false);
     setOpen(true);
     dialog.current.showModal();
   };
@@ -64,7 +69,7 @@ const ProfileSwitch = () => {
   // up and down through the list (a TV remote's arrows); Back steps out of the new profile form first
   const onKey = (e) => {
     e.stopPropagation();
-    if (adding) return;
+    if (adding || asking) return;
     if (isBack(e) && e.key !== "Escape") {
       e.preventDefault();
       close();
@@ -79,9 +84,10 @@ const ProfileSwitch = () => {
   };
 
   const onCancel = (e) => {
-    if (!adding) return;
+    if (!adding && !asking) return;
     e.preventDefault();
     setAdding(false);
+    setAsking(false);
   };
 
   return (
@@ -118,7 +124,12 @@ const ProfileSwitch = () => {
             />
           </div>
         )}
-        {open && !adding && (
+        {open && asking && (
+          <div className={Styles.sheet}>
+            <LockQuestion onDone={close} onCancel={() => setAsking(false)} />
+          </div>
+        )}
+        {open && !adding && !asking && (
           <div className={Styles.list}>
             <h2 id={titleId} className={Styles.label}>
               Switch profile
@@ -138,6 +149,7 @@ const ProfileSwitch = () => {
                     <span className={Styles.itemName} data-profile-name>
                       {p.name}
                     </span>
+                    {p.kid && <KidsBadge />}
                     {p.id === current.id && (
                       <span className={Styles.check}>
                         <Icon name="check" size={22} />
@@ -148,18 +160,23 @@ const ProfileSwitch = () => {
               ))}
             </ul>
             <div className={Styles.more}>
-              <button type="button" className={Styles.item} onClick={() => setAdding(true)}>
-                <span className={Styles.itemIcon}>
-                  <Icon name="plus" size={22} />
-                </span>
-                <span className={Styles.itemName}>Add profile</span>
-              </button>
-              <button type="button" className={Styles.item} onClick={manage}>
-                <span className={Styles.itemIcon}>
-                  <Icon name="sliders" size={22} />
-                </span>
-                <span className={Styles.itemName}>Manage profiles</span>
-              </button>
+              <GrownUp name="profile-add">
+                <button type="button" className={Styles.item} onClick={() => setAdding(true)}>
+                  <span className={Styles.itemIcon}>
+                    <Icon name="plus" size={22} />
+                  </span>
+                  <span className={Styles.itemName}>Add profile</span>
+                </button>
+              </GrownUp>
+              <GrownUp name="profile-manage">
+                <button type="button" className={Styles.item} onClick={manage}>
+                  <span className={Styles.itemIcon}>
+                    <Icon name="sliders" size={22} />
+                  </span>
+                  <span className={Styles.itemName}>Manage profiles</span>
+                </button>
+              </GrownUp>
+              <LockRow className={Styles.item} onAsk={() => setAsking(true)} onDone={close} />
             </div>
           </div>
         )}

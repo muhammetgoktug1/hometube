@@ -19,7 +19,8 @@ import Styles from "@/styles/dialog.module.scss";
 
 // A trigger button plus the dialog that saves a YouTube video or Short, or every Short of a channel, to the library;
 // while the server offers playlists, a playlist link opens the picker for its videos (PlaylistStep).
-const AddVideoDialog = ({ label = "Add video / Shorts", primary }) => {
+// Other props (data-grownup) go on the trigger button.
+const AddVideoDialog = ({ label = "Add video / Shorts", primary, ...trigger }) => {
   const dialog = useRef();
   const titleId = useId();
   const categories = useLibraryStore((state) => state.categories);
@@ -60,7 +61,7 @@ const AddVideoDialog = ({ label = "Add video / Shorts", primary }) => {
 
   return (
     <>
-      <button type="button" className={primary ? "btnBrand" : "btn"} onClick={open}>
+      <button type="button" className={primary ? "btnBrand" : "btn"} onClick={open} {...trigger}>
         <Icon name="plus" size={20} /> {label}
       </button>
 

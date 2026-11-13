@@ -7,6 +7,7 @@ import Link from "next/link";
 // Components
 import AppShell from "@/components/AppShell";
 import ChannelAvatar from "@/components/ChannelAvatar";
+import GrownUp from "@/components/GrownUp";
 import Icon from "@/components/Icon";
 import ShortsGrid from "@/components/ShortsGrid";
 import VideoGrid from "@/components/VideoGrid";
@@ -16,6 +17,9 @@ import ChannelFollow from "./partials/ChannelFollow";
 import ChannelImport from "./partials/ChannelImport";
 import ChannelRefresh from "./partials/ChannelRefresh";
 import ChannelStop from "./partials/ChannelStop";
+
+// Hooks
+import { useKids } from "@/hooks/useKids";
 
 // Store
 import useLibraryStore from "@/store/useLibraryStore";
@@ -33,6 +37,8 @@ const ChannelPage = () => {
   const longs = saved.filter((v) => !v.short);
   const shorts = saved.filter((v) => v.short);
   const [tab, setTab] = useState("videos");
+  // a kids profile gets the channel without its buttons (the row goes with them)
+  const kids = useKids() === "locked";
   // a channel with only Shorts opens on them
   const shown = shorts.length && (tab === "shorts" || !longs.length) ? "shorts" : "videos";
 
@@ -62,15 +68,25 @@ const ChannelPage = () => {
             {longs.length} saved {longs.length === 1 ? "video" : "videos"}
             {!!shorts.length && ` · ${shorts.length} ${shorts.length === 1 ? "Short" : "Shorts"}`}
           </p>
-          {channel.url && (
+          {channel.url && !kids && (
             <div className={Styles.actions}>
-              <ChannelFollow channel={channel} />
-              <ChannelImport channel={channel} />
-              <a href={channel.url} target="_blank" rel="noreferrer" className="btn">
-                <Icon name="external" size={20} /> Channel on YouTube
-              </a>
-              <ChannelRefresh channel={channel} />
-              <ChannelStop channel={channel} count={unfinished} />
+              <GrownUp name="follow">
+                <ChannelFollow channel={channel} />
+              </GrownUp>
+              <GrownUp name="import">
+                <ChannelImport channel={channel} />
+              </GrownUp>
+              <GrownUp name="channel-youtube">
+                <a href={channel.url} target="_blank" rel="noreferrer" className="btn">
+                  <Icon name="external" size={20} /> Channel on YouTube
+                </a>
+              </GrownUp>
+              <GrownUp name="refresh">
+                <ChannelRefresh channel={channel} />
+              </GrownUp>
+              <GrownUp name="stop">
+                <ChannelStop channel={channel} count={unfinished} />
+              </GrownUp>
             </div>
           )}
         </div>

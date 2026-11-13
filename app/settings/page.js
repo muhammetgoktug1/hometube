@@ -2,12 +2,14 @@
 
 // Components
 import AppShell from "@/components/AppShell";
+import { KidsBlocked } from "@/components/Kids";
 
 // Partials
 import Profiles from "./partials/Profiles";
 import Storage from "./partials/Storage";
 
 // Hooks
+import { useKids } from "@/hooks/useKids";
 import useSettings from "@/hooks/useSettings";
 
 // Styles
@@ -123,4 +125,15 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+// A kids profile gets a short note instead, while its parent lock is shut.
+const SettingsPage = () =>
+  useKids() === "locked" ? (
+    <AppShell>
+      <title>Settings · HomeTube</title>
+      <KidsBlocked />
+    </AppShell>
+  ) : (
+    <Settings />
+  );
+
+export default SettingsPage;

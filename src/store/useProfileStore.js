@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 // Store
+import useKidsStore from "@/store/useKidsStore";
 import useLibraryStore from "@/store/useLibraryStore";
 import useUiStore from "@/store/useUiStore";
 
@@ -20,12 +21,15 @@ const useProfileStore = create((set, get) => ({
 
   // Watch as another profile: remembered on this device, then the connection starts over with it
   // and the library loads again, without reloading the page.
+  // A kids profile's mark comes along, so its controls are hidden from the start; the parent lock shuts.
   pick: (profile) => {
-    const { id, name, color } = profile;
+    const { id, name, color, kid } = profile;
     rememberProfile(id);
+    useKidsStore.getState().forget();
     useLibraryStore.setState({ videos: [], channels: [], categories: [], loaded: false });
     useUiStore.setState({ category: "", query: "" });
-    set((s) => ({ state: { ...s.state, current: { id, name, color }, reason: undefined }, notice: false }));
+    const current = typeof kid === "boolean" ? { id, name, color, kid } : { id, name, color };
+    set((s) => ({ state: { ...s.state, current, reason: undefined }, notice: false }));
     getSocket().disconnect().connect();
   },
 

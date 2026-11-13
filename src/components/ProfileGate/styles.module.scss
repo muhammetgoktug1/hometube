@@ -136,6 +136,40 @@
   .tile:focus .face, .tile:hover .face { transform: none; }
 }
 
+// a kids profile's tile: a small tag on the picture; the picture and its tag step forward together
+.kidFace {
+  position: relative;
+  display: block;
+  flex: none;
+  line-height: 0;
+  transition: transform 0.15s;
+
+  .face { display: grid; }
+}
+
+.kidBadge.kidBadge {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--tile) * 0.07);
+  padding: 0.1em 0.65em;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: clamp(13px, 0.95vw, 18px);
+  line-height: 1.6;
+  transform: translateX(-50%);
+}
+
+.tile:hover .kidFace { transform: scale(1.03); }
+.tile:focus .kidFace { transform: scale(1.06); }
+.tile:hover .kidFace .face, .tile:focus .kidFace .face { transform: none; }
+
+@media (max-width: 640px) {
+  .tile:focus .kidFace, .tile:hover .kidFace { transform: none; }
+}
+
+.tile:focus:not(:focus-visible) .kidFace { transform: none; }
+
 // a mouse click doesn't need the ring (browsers without :focus-visible skip this and keep it)
 .tile:focus:not(:focus-visible) .face { transform: none; box-shadow: none; }
 .tile:focus:not(:focus-visible) .name { font-weight: 400; }

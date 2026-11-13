@@ -8,7 +8,8 @@ import { getSocket } from "@/utils/socket";
 
 // Stops the channel's unfinished downloads and takes them off the queue and out of the library.
 // count: how many there are; the button only shows while there are some. First click arms it for three seconds.
-const ChannelStop = ({ channel, count }) => {
+// Other props (data-grownup) go on the button.
+const ChannelStop = ({ channel, count, ...props }) => {
   const [armed, setArmed] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -38,6 +39,7 @@ const ChannelStop = ({ channel, count }) => {
       onClick={click}
       disabled={busy}
       title="Stop this channel's downloads and take them off the queue; you can pick them again later with Get videos"
+      {...props}
     >
       <Icon name="close" size={20} /> {label()}
     </button>

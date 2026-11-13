@@ -4,6 +4,9 @@ import { useRouter } from "next/navigation";
 // Components
 import Icon from "@/components/Icon";
 
+// Hooks
+import { useKids } from "@/hooks/useKids";
+
 // Store
 import useLibraryStore from "@/store/useLibraryStore";
 
@@ -36,6 +39,8 @@ const Player = ({ video }) => {
   const [left, setLeft] = useState(null);
   // picked once the video ends, so a library update during the countdown doesn't swap it
   const [next, setNext] = useState();
+  // a locked kids profile gets no Download in the browser's own video menu
+  const locked = useKids() === "locked";
 
   const play = (v) => router.push(`/watch/${v.id}`);
 
@@ -101,6 +106,7 @@ const Player = ({ video }) => {
         src={`/media/${video.id}/video.mp4`}
         poster={`/media/${video.id}/thumb.jpg`}
         controls
+        controlsList={locked ? "nodownload" : undefined}
         autoPlay
         playsInline
         onPlay={watched}

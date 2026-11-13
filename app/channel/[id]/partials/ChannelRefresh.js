@@ -10,8 +10,8 @@ import { getSocket } from "@/utils/socket";
 import Styles from "../styles.module.scss";
 
 // Reads the channel again from YouTube: its name, link and profile picture, and for a followed
-// channel looks for new uploads right away.
-const ChannelRefresh = ({ channel }) => {
+// channel looks for new uploads right away. Other props (data-grownup) go on the button.
+const ChannelRefresh = ({ channel, ...props }) => {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [note, setNote] = useState("");
@@ -31,7 +31,7 @@ const ChannelRefresh = ({ channel }) => {
 
   return (
     <>
-      <button type="button" className="btn" onClick={refresh} disabled={busy} title="Read the name and picture again from YouTube">
+      <button type="button" className="btn" onClick={refresh} disabled={busy} title="Read the name and picture again from YouTube" {...props}>
         <span className={busy ? Styles.spinning : Styles.refreshIcon}>
           <Icon name="retry" size={20} />
         </span> {busy ? "Refreshing…" : "Refresh"}

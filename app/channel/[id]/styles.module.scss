@@ -37,6 +37,9 @@
 
 .pageTabs { margin-bottom: 24px; }
 
+// a kids profile has no buttons under the name: the name and count center on the picture
+:global(html[data-kids="locked"]) .head p:last-child { margin-bottom: 0; }
+
 // ---- "Get videos" dialog
 .tabs {
   display: flex;

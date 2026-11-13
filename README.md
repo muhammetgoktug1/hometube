@@ -100,6 +100,7 @@ All three variables are required; the app exits with `missing env X` if one is a
 | `HOMETUBE_PROFILES` | `1` (optional: everyone at home gets their own videos, categories and follows; the cleanup rules stay off while it's on) |
 | `HOMETUBE_DUPES` | `1` (optional: finds videos whose content is already in the library and says so on the card and the video's page; it never deletes anything) |
 | `HOMETUBE_PLAYLISTS` | `1` (optional: lists a pasted YouTube playlist link's videos, marks the ones already saved and queues the picked ones; up to 1000 a playlist, Mixes aren't playlists) |
+| `HOMETUBE_KIDS` | `1` (optional, with `HOMETUBE_PROFILES`: a profile marked as a kids profile in Settings watches without adding, deleting or changing settings; a grown-up opens it on one device for 15 minutes with the parent lock in its profile menu) |
 
 ## Local development
 

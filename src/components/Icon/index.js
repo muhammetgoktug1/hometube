@@ -65,6 +65,24 @@ const PATHS = {
       <path d="M6.7 17.3L17.3 6.7" />
     </>
   ),
+  lock: (
+    <>
+      <rect x="5.5" y="10.5" width="13" height="9.5" rx="2" />
+      <path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" />
+    </>
+  ),
+  unlock: (
+    <>
+      <rect x="5.5" y="10.5" width="13" height="9.5" rx="2" />
+      <path d="M8.5 10.5V7a3.5 3.5 0 0 1 6.53-1.75" />
+    </>
+  ),
+  backspace: (
+    <>
+      <path d="M9 5.5h10a1.5 1.5 0 0 1 1.5 1.5v10a1.5 1.5 0 0 1-1.5 1.5H9L3.5 12z" />
+      <path d="M11.5 9.5l5 5M16.5 9.5l-5 5" />
+    </>
+  ),
 };
 
 const Icon = ({ name, size = 24 }) => (

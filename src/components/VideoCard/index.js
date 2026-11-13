@@ -6,6 +6,7 @@ import Link from "next/link";
 // Components
 import ChannelAvatar from "@/components/ChannelAvatar";
 import DupeBadge from "@/components/DupeBadge";
+import GrownUp from "@/components/GrownUp";
 import Icon from "@/components/Icon";
 
 // Store
@@ -91,18 +92,22 @@ const VideoCard = ({ video, compact }) => {
               {video.membersOnly ? "Only the channel's members can watch this on YouTube" : video.error}
               {/* retrying a members-only video fails the same way */}
               {!video.membersOnly && (
-                <button type="button" onClick={retry}>
-                  <Icon name="retry" size={14} /> Retry
-                </button>
+                <GrownUp name="retry">
+                  <button type="button" onClick={retry}>
+                    <Icon name="retry" size={14} /> Retry
+                  </button>
+                </GrownUp>
               )}
             </span>
           )}
           {video.status === "waiting" && (
             <span className={Styles.waiting} title={video.error}>
               Retrying automatically{video.retryAt ? ` at ${fmtClock(video.retryAt)}` : ""}
-              <button type="button" onClick={retry}>
-                <Icon name="retry" size={14} /> Retry now
-              </button>
+              <GrownUp name="retry">
+                <button type="button" onClick={retry}>
+                  <Icon name="retry" size={14} /> Retry now
+                </button>
+              </GrownUp>
             </span>
           )}
         </div>

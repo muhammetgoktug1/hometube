@@ -11,7 +11,8 @@ import { getSocket } from "@/utils/socket";
 import Styles from "../styles.module.scss";
 
 // The first click arms it for three seconds, the second deletes the video and its files.
-const DeleteButton = ({ id }) => {
+// Other props (data-grownup) go on the button.
+const DeleteButton = ({ id, ...props }) => {
   const router = useRouter();
   const [armed, setArmed] = useState(false);
 
@@ -25,7 +26,7 @@ const DeleteButton = ({ id }) => {
   };
 
   return (
-    <button type="button" className={`btn ${Styles.delete}`} data-armed={armed} onClick={click}>
+    <button type="button" className={`btn ${Styles.delete}`} data-armed={armed} onClick={click} {...props}>
       <Icon name="trash" size={20} /> {armed ? "Click again to delete" : "Delete"}
     </button>
   );

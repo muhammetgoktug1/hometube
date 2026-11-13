@@ -6,6 +6,7 @@ import Link from "next/link";
 // Components
 import AppShell from "@/components/AppShell";
 import ChannelAvatar from "@/components/ChannelAvatar";
+import GrownUp from "@/components/GrownUp";
 import Icon from "@/components/Icon";
 
 // Partials
@@ -14,6 +15,9 @@ import Description from "./partials/Description";
 import DupeNotice from "./partials/DupeNotice";
 import Player from "./partials/Player";
 import UpNext from "./partials/UpNext";
+
+// Hooks
+import { useKids } from "@/hooks/useKids";
 
 // Store
 import useLibraryStore from "@/store/useLibraryStore";
@@ -25,8 +29,9 @@ import { getSocket } from "@/utils/socket";
 // Styles
 import Styles from "./styles.module.scss";
 
-// What the player area says until the file is there.
-const notReadyText = (video) => {
+// What the player area says until the file is there; kids: a kids profile can't delete it.
+const notReadyText = (video, kids) => {
+  if (video.membersOnly && kids) return "This video is only for the channel's members on YouTube, so it can't be downloaded.";
   if (video.membersOnly) return "This video is only for the channel's members on YouTube, so it can't be downloaded. You can delete it.";
   if (video.status === "failed") return `This video couldn't be downloaded: ${video.error}`;
   if (video.status === "waiting" && video.slowedDown) {
@@ -41,6 +46,7 @@ const Watch = () => {
   const { id } = useParams();
   const { videos, channels, categories, loaded } = useLibraryStore();
   const video = videos.find((v) => v.id === id);
+  const kids = useKids() === "locked";
 
   if (!video) {
     return (
@@ -69,7 +75,7 @@ const Watch = () => {
         {video.status === "ready" ? (
           <Player key={id} video={video} />
         ) : (
-          <p className={Styles.notReady}>{notReadyText(video)}</p>
+          <p className={Styles.notReady}>{notReadyText(video, kids)}</p>
         )}
       </div>
 
@@ -86,23 +92,31 @@ const Watch = () => {
               </span>
             </Link>
 
-            <div className={Styles.actions}>
-              <label className={`btn ${Styles.category}`}>
-                <Icon name="tag" size={20} />
-                <select value={video.category} onChange={setCategory} aria-label="Category">
-                  <option value="">No category</option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <a href={video.url} target="_blank" rel="noreferrer" className="btn">
-                <Icon name="external" size={20} /> YouTube
-              </a>
-              <DeleteButton id={id} />
-            </div>
+            {!kids && (
+              <div className={Styles.actions}>
+                <GrownUp name="category">
+                  <label className={`btn ${Styles.category}`}>
+                    <Icon name="tag" size={20} />
+                    <select value={video.category} onChange={setCategory} aria-label="Category">
+                      <option value="">No category</option>
+                      {categories.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </GrownUp>
+                <GrownUp name="youtube">
+                  <a href={video.url} target="_blank" rel="noreferrer" className="btn">
+                    <Icon name="external" size={20} /> YouTube
+                  </a>
+                </GrownUp>
+                <GrownUp name="delete">
+                  <DeleteButton id={id} />
+                </GrownUp>
+              </div>
+            )}
           </div>
 
           <DupeNotice key={id} video={video} />
