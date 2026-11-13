@@ -101,6 +101,7 @@ All three variables are required; the app exits with `missing env X` if one is a
 | `HOMETUBE_DUPES` | `1` (optional: finds videos whose content is already in the library and says so on the card and the video's page; it never deletes anything) |
 | `HOMETUBE_PLAYLISTS` | `1` (optional: lists a pasted YouTube playlist link's videos, marks the ones already saved and queues the picked ones; up to 1000 a playlist, Mixes aren't playlists) |
 | `HOMETUBE_KIDS` | `1` (optional, with `HOMETUBE_PROFILES`: a profile marked as a kids profile in Settings watches without adding, deleting or changing settings; a grown-up opens it on one device for 15 minutes with the parent lock in its profile menu) |
+| `HOMETUBE_TITLE_LANG` | `auto`, or a language code such as `de` (optional: a channel's or a playlist's videos are listed with their own titles, not YouTube's English translations; `auto` reads the list's first video for its language) |
 
 ## Local development
 
