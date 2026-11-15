@@ -38,9 +38,9 @@ const ShortCard = ({ video }) => {
   );
 };
 
-// The channel page's Shorts: tall cards, like the Shorts tab on YouTube.
-const ShortsGrid = ({ videos }) => (
-  <section className={Styles.grid}>
+// The channel page's Shorts: tall cards, like the Shorts tab on YouTube. shown / total: as on VideoGrid.
+const ShortsGrid = ({ videos, shown, total }) => (
+  <section className={Styles.grid} data-shown={shown} data-total={total}>
     {videos.map((v) => (
       <ShortCard key={v.id} video={v} />
     ))}

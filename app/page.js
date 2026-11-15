@@ -7,6 +7,7 @@ import AddVideoDialog from "@/components/AddVideoDialog";
 import AppShell from "@/components/AppShell";
 import GrownUp from "@/components/GrownUp";
 import { LogoMark } from "@/components/Logo";
+import ShowMore from "@/components/ShowMore";
 import VideoGrid from "@/components/VideoGrid";
 
 // Partials
@@ -14,15 +15,18 @@ import CategoryChips from "./partials/CategoryChips";
 
 // Hooks
 import { useKids } from "@/hooks/useKids";
+import { useMore } from "@/hooks/usePaging";
 
 // Store
 import useDupeStore from "@/store/useDupeStore";
 import useLibraryStore from "@/store/useLibraryStore";
+import usePagingStore from "@/store/usePagingStore";
 import useUiStore from "@/store/useUiStore";
 
 // Utils
 import { groupOrder, warns } from "@/utils/dupes";
 import { mixFeed } from "@/utils/feed";
+import { homePage } from "@/utils/homeFeed";
 import { matches } from "@/utils/shortcuts";
 
 // Styles
@@ -41,6 +45,11 @@ const Home = () => {
   const found = videos.filter((v) => !v.short && (!category || v.category === category) && matches(v, channelName(v.channel), query) && (!only || warns(dupes[v.id])));
   // categories and search results stay newest first, as the server sends them
   const shown = only ? groupOrder(found, dupes) : !category && !query.trim() ? mixFeed(found, seed) : found;
+  // HOMETUBE_PAGING: "All" draws only the unwatched videos, a few of each channel; the other views a page at a time
+  const paging = usePagingStore((state) => state.on);
+  const main = !only && !category && !query.trim();
+  const [more, showMore] = useMore(`${main}|${category}|${query}|${only}`);
+  const paged = paging ? homePage(shown, main, more) : null;
 
   return (
     <AppShell>
@@ -66,11 +75,14 @@ const Home = () => {
         </div>
       )}
 
+      {!!videos.length && !!shown.length && paged && !paged.total && <p className={Styles.none}>You have watched every video. New ones show up here.</p>}
+
       {!!videos.length && !shown.length && (
         <p className={Styles.none}>{query ? `Nothing in your library matches "${query}".` : "No videos in this category yet."}</p>
       )}
 
-      <VideoGrid videos={shown} />
+      {paged ? <VideoGrid videos={paged.videos} shown={paged.videos.length} total={paged.total} /> : <VideoGrid videos={shown} />}
+      {paged?.left > 0 && <ShowMore where="home" onClick={showMore} />}
     </AppShell>
   );
 };

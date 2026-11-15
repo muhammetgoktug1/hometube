@@ -13,6 +13,7 @@ import { videoIdOf, channelShortsOf, watchUrl, probe, videoFields, channelInfo, 
 import { startDupes } from "./lib/dupes.js";
 import { startProfiles } from "./lib/profiles.js";
 import { startPlaylists } from "./lib/playlists.js";
+import { startPaging } from "./lib/paging.js";
 
 const dev = process.argv.includes("--dev");
 const app = next({ dev });
@@ -397,6 +398,7 @@ startSync({ queueUploads: profiles.queueUploads || queueUploads, enqueue, change
 startCleanup(removeVideo, changed);
 startDupes(io);
 startPlaylists(io, { queueUploads, enqueue, changed, avatarQueue });
+startPaging(io);
 // channels saved before avatars existed, or whose avatar failed last time
 (await Channel.find({ avatar: { $ne: true } }).lean()).forEach((c) => avatarQueue.push(c));
 

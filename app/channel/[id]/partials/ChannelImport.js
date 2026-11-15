@@ -2,11 +2,17 @@ import { useId, useRef, useState } from "react";
 
 // Components
 import Icon from "@/components/Icon";
+import ShowMore from "@/components/ShowMore";
+
+// Hooks
+import { useMore } from "@/hooks/usePaging";
 
 // Store
 import useLibraryStore from "@/store/useLibraryStore";
+import usePagingStore from "@/store/usePagingStore";
 
 // Utils
+import { pageOf } from "@/utils/homeFeed";
 import { bytesPerSecond, fmtBytes, fmtDuration } from "@/utils/shortcuts";
 import { getSocket } from "@/utils/socket";
 
@@ -50,6 +56,11 @@ const ChannelImport = ({ channel, ...props }) => {
   // members-only uploads can't be downloaded, so they're shown but never picked
   const fresh = videos.filter((v) => !v.saved && !v.membersOnly);
   const shown = videos.filter((v) => filter === "all" || (filter === "saved") === v.saved);
+  // HOMETUBE_PAGING: a page of the list at a time; another tab, filter or reading starts again
+  const paging = usePagingStore((state) => state.on);
+  const [more, showMore] = useMore(`${tab}|${filter}|${videos.length}`);
+  const page = paging ? pageOf(shown, more) : null;
+  const drawn = page ? page.videos : shown;
   const count = { new: videos.filter((v) => !v.saved).length, saved: videos.filter((v) => v.saved).length, all: videos.length };
   const allPicked = !!fresh.length && fresh.every((v) => picked.includes(v.ytId));
   // YouTube's channel list has no file sizes, so estimate them from the library's average bitrate
@@ -151,7 +162,7 @@ const ChannelImport = ({ channel, ...props }) => {
               </div>
 
               <ul className={Styles.importList}>
-                {shown.map((v) => (
+                {drawn.map((v) => (
                   <li key={v.ytId}>
                     <label data-saved={v.saved || v.membersOnly}>
                       <input
@@ -174,6 +185,7 @@ const ChannelImport = ({ channel, ...props }) => {
                 ))}
                 {!shown.length && <li className={DialogStyles.hint}>Nothing here.</li>}
               </ul>
+              {page?.left > 0 && <ShowMore where="import" onClick={showMore} />}
             </>
           )}
 

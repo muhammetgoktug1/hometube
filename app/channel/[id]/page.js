@@ -10,6 +10,7 @@ import ChannelAvatar from "@/components/ChannelAvatar";
 import GrownUp from "@/components/GrownUp";
 import Icon from "@/components/Icon";
 import ShortsGrid from "@/components/ShortsGrid";
+import ShowMore from "@/components/ShowMore";
 import VideoGrid from "@/components/VideoGrid";
 
 // Partials
@@ -20,9 +21,14 @@ import ChannelStop from "./partials/ChannelStop";
 
 // Hooks
 import { useKids } from "@/hooks/useKids";
+import { useMore } from "@/hooks/usePaging";
 
 // Store
 import useLibraryStore from "@/store/useLibraryStore";
+import usePagingStore from "@/store/usePagingStore";
+
+// Utils
+import { pageOf } from "@/utils/homeFeed";
 
 // Styles
 import Styles from "./styles.module.scss";
@@ -41,6 +47,12 @@ const ChannelPage = () => {
   const kids = useKids() === "locked";
   // a channel with only Shorts opens on them
   const shown = shorts.length && (tab === "shorts" || !longs.length) ? "shorts" : "videos";
+  // HOMETUBE_PAGING: a page of the tab at a time, each tab counted on its own
+  const paging = usePagingStore((state) => state.on);
+  const [moreVideos, showMoreVideos] = useMore(id);
+  const [moreShorts, showMoreShorts] = useMore(id);
+  const [list, more, showMore] = shown === "shorts" ? [shorts, moreShorts, showMoreShorts] : [longs, moreVideos, showMoreVideos];
+  const page = paging ? pageOf(list, more) : null;
 
   if (!channel) {
     return (
@@ -103,7 +115,12 @@ const ChannelPage = () => {
         )}
       </div>
 
-      {shown === "shorts" ? <ShortsGrid videos={shorts} /> : <VideoGrid videos={longs} />}
+      {shown === "shorts" ? (
+        <ShortsGrid videos={page ? page.videos : shorts} shown={page?.videos.length} total={page?.total} />
+      ) : (
+        <VideoGrid videos={page ? page.videos : longs} shown={page?.videos.length} total={page?.total} />
+      )}
+      {page?.left > 0 && <ShowMore where="channel" onClick={showMore} />}
     </AppShell>
   );
 };
