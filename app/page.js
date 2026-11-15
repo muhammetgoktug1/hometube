@@ -45,7 +45,7 @@ const Home = () => {
   const found = videos.filter((v) => !v.short && (!category || v.category === category) && matches(v, channelName(v.channel), query) && (!only || warns(dupes[v.id])));
   // categories and search results stay newest first, as the server sends them
   const shown = only ? groupOrder(found, dupes) : !category && !query.trim() ? mixFeed(found, seed) : found;
-  // HOMETUBE_PAGING: "All" draws only the unwatched videos, a few of each channel; the other views a page at a time
+  // HOMETUBE_PAGING: "All" draws only the unwatched videos, the channels taking turns; every view a page at a time
   const paging = usePagingStore((state) => state.on);
   const main = !only && !category && !query.trim();
   const [more, showMore] = useMore(`${main}|${category}|${query}|${only}`);

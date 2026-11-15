@@ -5,7 +5,7 @@ import { libraryFor } from "../../lib/profileRules.js";
 
 // A library shaped like a real one: one profile with one big channel (most never opened, a few left halfway, a few
 // opened but never played), another with two channels, one of them half downloaded (queued videos have no upload
-// date yet), and some videos watched to the end. The numbers on the page (3, 6, 20) are written out on purpose.
+// date yet), and some videos watched to the end. The numbers on the page (20 a page) are written out on purpose.
 const DAY = 86_400_000;
 const now = Date.UTC(2026, 10, 15);
 let n = 0;
@@ -69,19 +69,22 @@ const checks = {
     assert.deepEqual([second[0], second[1], second[2], third[0], third[1]].map((v) => twos.has(v.id)), [false, true, false, false, true]);
   },
 
-  "the first screen holds at most 3 of each channel": () => {
-    assert.deepEqual(perChannel(home(big, 0).videos), { c1: 3 });
-    assert.deepEqual(perChannel(home(both, 0).videos), { c2: 3, c3: 3 });
+  "the first screen holds 20, the channels taking turns, or every unwatched video when fewer": () => {
+    assert.deepEqual(perChannel(home(big, 0).videos), { c1: 20 });
+    assert.equal(home(big, 0).left, 173);
+    assert.deepEqual(perChannel(home(both, 0).videos), { c2: 10, c3: 10 });
     const few = [video("c7"), video("c8"), video("c8"), ...Array.from({ length: 9 }, () => video("c9"))];
-    assert.deepEqual(perChannel(home(few, 0).videos), { c7: 1, c8: 2, c9: 3 });
+    assert.deepEqual(perChannel(home(few, 0).videos), { c7: 1, c8: 2, c9: 9 });
+    assert.equal(home(few, 0).left, 0);
   },
 
   "each channel shows its newest unwatched videos, downloaded ones before queued ones": () => {
     const first = home(both, 0).videos;
-    const newest = (list) => list.filter((v) => !watched(v) && v.status === "ready").sort((a, b) => b.uploadedAt - a.uploadedAt).slice(0, 3).map((v) => v.id);
+    const newest = (list) => list.filter((v) => !watched(v) && v.status === "ready").sort((a, b) => b.uploadedAt - a.uploadedAt).slice(0, 10).map((v) => v.id);
     assert.deepEqual(first.filter((v) => v.channel === "c2").map((v) => v.id), newest(second));
     assert.deepEqual(first.filter((v) => v.channel === "c3").map((v) => v.id), newest(third));
-    assert.equal(first.length, 6);
+    assert.equal(first.length, 20);
+    assert.equal(first.filter(watched).length, 0);
   },
 
   "channels keep the home page's order, and turns go a channel at a time": () => {
@@ -92,20 +95,22 @@ const checks = {
     const order = [...new Set(mixed.map((v) => v.channel))];
     assert.equal(order[0], "c8");
     const page = homePage(mixed, true, 0);
-    assert.equal(page.videos.length, 15);
-    for (let turn = 0; turn < 3; turn += 1) assert.deepEqual(page.videos.slice(turn * 5, turn * 5 + 5).map((v) => v.channel), order);
-    // the 4th of each channel, in the same order, then the 5th
-    assert.deepEqual(homePage(mixed, true, 1).videos.slice(15).map((v) => v.channel), [...order, order[0]]);
+    assert.equal(page.videos.length, 20);
+    for (let turn = 0; turn < 4; turn += 1) assert.deepEqual(page.videos.slice(turn * 5, turn * 5 + 5).map((v) => v.channel), order);
+    // Show more: the 5th to the 8th of each channel, in the same order
+    const next = homePage(mixed, true, 1).videos;
+    assert.deepEqual(next.slice(0, 20), page.videos);
+    assert.deepEqual(next.slice(20).map((v) => v.channel), [...order, ...order, ...order, ...order]);
   },
 
-  "Show more adds exactly 6 and never one twice": () => {
+  "Show more adds exactly 20 and never one twice": () => {
     for (const lib of [big, both]) {
       const pages = presses((m) => home(lib, m));
-      assert.ok(pages.length > 10);
+      assert.ok(pages.length >= 10);
       pages.slice(1).forEach((p, i) => {
         const before = pages[i].videos;
         assert.deepEqual(p.videos.slice(0, before.length), before);
-        assert.equal(p.videos.length - before.length, p.left > 0 ? 6 : Math.min(6, p.total - before.length));
+        assert.equal(p.videos.length - before.length, p.left > 0 ? 20 : Math.min(20, p.total - before.length));
       });
       const last = pages.at(-1).videos;
       assert.equal(new Set(last.map((v) => v.id)).size, last.length);
@@ -118,10 +123,10 @@ const checks = {
     assert.equal(last.left, 0);
     assert.equal(last.total, 193);
     assert.equal(last.videos.length, 193);
-    assert.equal(pages.length, 33);
+    assert.equal(pages.length, 10);
     assert.ok(pages.slice(0, -1).every((p) => p.left > 0));
-    // 3 on the first screen + 31 presses of 6 = 189, the 32nd brings the last 4
-    assert.deepEqual([pages[0].videos.length, pages[31].videos.length, pages[32].videos.length], [3, 189, 193]);
+    // 20 on the first screen + 8 presses of 20 = 180, the 9th brings the last 13
+    assert.deepEqual(pages.map((p) => p.videos.length), [20, 40, 60, 80, 100, 120, 140, 160, 180, 193]);
   },
 
   "with nothing left to watch the home page draws nothing and has no button": () => {

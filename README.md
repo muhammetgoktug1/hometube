@@ -102,7 +102,7 @@ All three variables are required; the app exits with `missing env X` if one is a
 | `HOMETUBE_PLAYLISTS` | `1` (optional: lists a pasted YouTube playlist link's videos, marks the ones already saved and queues the picked ones; up to 1000 a playlist, Mixes aren't playlists) |
 | `HOMETUBE_KIDS` | `1` (optional, with `HOMETUBE_PROFILES`: a profile marked as a kids profile in Settings watches without adding, deleting or changing settings; a grown-up opens it on one device for 15 minutes with the parent lock in its profile menu) |
 | `HOMETUBE_TITLE_LANG` | `auto`, or a language code such as `de` (optional: a channel's or a playlist's videos are listed with their own titles, not YouTube's English translations; `auto` reads the list's first video for its language) |
-| `HOMETUBE_PAGING` | `1` (optional: the home page shows only the videos not watched yet, the newest 3 of each channel, and a channel's page 20 at a time; "Show more" adds 6 on the home page and 20 elsewhere) |
+| `HOMETUBE_PAGING` | `1` (optional: the home page shows only the videos not watched yet, the channels taking turns, and it and a channel's page 20 at a time; "Show more" adds 20) |
 
 ## Local development
 
