@@ -14,6 +14,7 @@ import { startDupes } from "./lib/dupes.js";
 import { startProfiles } from "./lib/profiles.js";
 import { startPlaylists } from "./lib/playlists.js";
 import { startPaging } from "./lib/paging.js";
+import { startCategoryEdit } from "./lib/categories.js";
 
 const dev = process.argv.includes("--dev");
 const app = next({ dev });
@@ -362,6 +363,9 @@ function wire(io) {
 
     socket.on("category:add", async (name, ack) => {
       if (!categoryName(name)) return ack({ error: "Give the category a name." });
+      // with HOMETUBE_CATEGORY_EDIT a name there's a category for already answers that one (lib/categories.js)
+      const existing = await categories.existing(name);
+      if (existing) return ack(existing);
       const category = await Category.create({ name: categoryName(name), order: await Category.countDocuments() });
       ack({ id: String(category._id) });
       await broadcast();
@@ -390,6 +394,7 @@ const server = createServer((req, res) => {
 });
 const io = new Server(server);
 const profiles = startProfiles(io, { library, queueUploads, removeVideo });
+const categories = startCategoryEdit(io, { changed: () => changed() });
 const broadcast = wire(io);
 const changed = () => broadcast().catch((err) => console.error("broadcast failed", err));
 avatarQueue.onSaved = changed;

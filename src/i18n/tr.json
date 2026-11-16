@@ -200,6 +200,8 @@
     "All of this channel's Shorts are already in your library.": "Bu kanalın bütün Shorts'ları zaten kütüphanende.",
     "Unknown setting.": "Bilinmeyen ayar.",
     "Give the category a name.": "Kategoriye bir ad ver.",
+    "There's already a category with this name.": "Bu adla bir kategori zaten var.",
+    "This category no longer exists.": "Bu kategori artık yok.",
     "This channel has no YouTube link to follow.": "Bu kanalın takip edilecek bir YouTube bağlantısı yok.",
     "This video no longer exists.": "Bu video artık yok.",
     "yt-dlp exited with code {n}": "yt-dlp {n} koduyla kapandı",

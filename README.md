@@ -103,6 +103,7 @@ All three variables are required; the app exits with `missing env X` if one is a
 | `HOMETUBE_KIDS` | `1` (optional, with `HOMETUBE_PROFILES`: a profile marked as a kids profile in Settings watches without adding, deleting or changing settings; a grown-up opens it on one device for 15 minutes with the parent lock in its profile menu) |
 | `HOMETUBE_TITLE_LANG` | `auto`, or a language code such as `de` (optional: a channel's or a playlist's videos are listed with their own titles, not YouTube's English translations; `auto` reads the list's first video for its language) |
 | `HOMETUBE_PAGING` | `1` (optional: the home page shows only the videos not watched yet, the channels taking turns, and it and a channel's page 20 at a time; "Show more" adds 20) |
+| `HOMETUBE_CATEGORY_EDIT` | `1` (optional: a category can be renamed, and adding a name there's already a category for, in any case, picks that one instead of making a second) |
 
 ## Local development
 
