@@ -1,0 +1,437 @@
+// The watch page's category picker: a big window in the middle of the screen (a sheet from the bottom on a phone).
+// Sizes come from the design: rows 56 px (72 on a TV), 44 px buttons (56), a 560 px window (780) in the middle of
+// the screen, a sheet from the bottom on a phone. Colors are the app's own; the window's few extra greys and the
+// error red are the design's, with light-theme twins.
+
+// the category button next to YouTube and Delete; white while its window is open
+.button {
+  padding: 0 10px 0 14px;
+
+  &[aria-expanded="true"],
+  &[aria-expanded="true"]:hover { background: var(--chip-active-bg); color: var(--chip-active-text); }
+}
+
+.label { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.dialog {
+  --row: 56px;
+  --fs: 16px;
+  --ib: 44px;
+  --ic: 22px;
+  --radio: 24px;
+  --pad: 24px;
+  --cp-window: var(--bg);
+  --cp-field: var(--bg);
+  --cp-hover: rgba(0, 0, 0, 0.05);
+  --cp-focus: #1c62b9;
+  --cp-err: var(--brand);
+  --cp-radio: #909090;
+  --cp-outline: rgba(0, 0, 0, 0.16);
+  --cp-grab: #c4c4c4;
+  --cp-hint: #757575;
+  --cp-tag: rgba(0, 0, 0, 0.08);
+  --cp-mark: rgba(0, 0, 0, 0.1);
+  --cp-shadow: 0 24px 70px rgba(0, 0, 0, 0.25);
+
+  @media (prefers-color-scheme: dark) {
+    --cp-window: #1f1f1f;
+    --cp-field: #121212;
+    --cp-hover: rgba(255, 255, 255, 0.08);
+    --cp-err: #ff6b63;
+    --cp-radio: #7a7a7a;
+    --cp-outline: rgba(255, 255, 255, 0.16);
+    --cp-grab: #5c5c5c;
+    --cp-hint: #8f8f8f;
+    --cp-tag: rgba(255, 255, 255, 0.12);
+    --cp-mark: rgba(255, 255, 255, 0.14);
+    --cp-shadow: 0 24px 70px rgba(0, 0, 0, 0.7);
+  }
+
+  width: min(560px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100vh - 48px);
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 18px;
+  background: var(--cp-window);
+  color: var(--text);
+  box-shadow: var(--cp-shadow);
+  font-size: var(--fs);
+  outline: none;
+
+  &[open] { display: flex; flex-direction: column; }
+
+  &::backdrop { background: rgba(0, 0, 0, 0.62); }
+
+  // a TV: the same window, larger
+  @media (min-width: 1800px) {
+    --row: 72px;
+    --fs: 20px;
+    --ib: 56px;
+    --ic: 28px;
+    --radio: 28px;
+    --pad: 32px;
+    width: 780px;
+    border-radius: 22px;
+  }
+
+  // a phone: a sheet from the bottom, above the keyboard (bottom and max-height set from the visible screen)
+  &[data-sheet="true"] {
+    --row: 56px;
+    --fs: 16px;
+    --ib: 44px;
+    --ic: 22px;
+    --radio: 24px;
+    --pad: 20px;
+    inset: auto 0 0 0;
+    width: 100%;
+    margin: 0;
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
+  }
+
+  svg { flex: none; width: var(--ic); height: var(--ic); }
+}
+
+.grab { flex: none; width: 40px; height: 4px; margin: 10px auto 2px; border-radius: 2px; background: var(--cp-grab); }
+
+.head {
+  flex: none;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: calc(var(--pad) - 4px) calc(var(--pad) - 10px) 12px var(--pad);
+
+  [data-sheet="true"] > & { padding-top: 8px; }
+}
+
+.heading {
+  flex: 1;
+  min-width: 0;
+
+  h2 { margin: 0; font-size: calc(var(--fs) + 4px); font-weight: 500; line-height: 1.25; }
+
+  b {
+    display: block;
+    margin-top: 3px;
+    overflow: hidden;
+    color: var(--text-2);
+    font-size: calc(var(--fs) - 3px);
+    font-weight: 400;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+// round icon buttons: close, and clear in a box
+.close,
+.clear {
+  flex: none;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-2);
+
+  @media (hover: hover) { &:hover { background: var(--cp-hover); color: var(--text); } }
+}
+
+.close { width: var(--ib); height: var(--ib); }
+
+.clear { width: calc(var(--ib) - 4px); height: calc(var(--ib) - 4px); }
+
+.body { flex: none; padding: 0 var(--pad); }
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: calc(var(--row) - 4px);
+  padding: 0 6px 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--cp-field);
+  color: var(--text-2);
+  font-size: var(--fs);
+  cursor: text;
+
+  &:focus-within { border-color: var(--cp-focus); box-shadow: 0 0 0 1px var(--cp-focus); color: var(--text); }
+
+  &.bad,
+  &.bad:focus-within { border-color: var(--cp-err); box-shadow: 0 0 0 1px var(--cp-err); }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    font-size: var(--fs);
+    caret-color: var(--cp-focus);
+
+    &::placeholder { color: var(--cp-hint); opacity: 1; }
+  }
+}
+
+// what the server (or the name rule) refuses, under its box
+.fault {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 4px 2px;
+  color: var(--cp-err);
+  font-size: 13px;
+  font-weight: 500;
+
+  svg { width: 16px; height: 16px; }
+}
+
+.list {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 8px calc(var(--pad) - 12px) 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.row {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: var(--row);
+  padding-right: 4px;
+  border-radius: 12px;
+
+  @media (hover: hover) { &:hover { background: var(--cp-hover); } }
+  &[data-exact] { background: var(--surface); }
+}
+
+// the row's own press: its radio, name and count (the left padding too)
+.pick {
+  flex: 1;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  min-height: var(--row);
+  padding: 0 0 0 12px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  font-size: var(--fs);
+  text-align: left;
+}
+
+.radio {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--radio);
+  height: var(--radio);
+  border: 2px solid var(--cp-radio);
+  border-radius: 50%;
+
+
+  svg { width: calc(var(--radio) * 0.72); height: calc(var(--radio) * 0.72); stroke-width: 2.6; }
+}
+
+.radioOn { border: 0; background: var(--text); color: var(--bg); }
+
+.name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 500;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  u { padding: 0 1px; border-radius: 3px; background: var(--cp-mark); color: var(--text); text-decoration: none; }
+}
+
+.tag {
+  flex: none;
+  padding: 3px 9px;
+  border-radius: 12px;
+  background: var(--cp-tag);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.count { flex: none; margin-right: 4px; color: var(--text-2); font-size: calc(var(--fs) - 2px); }
+
+.editButton {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: calc(var(--ib) - 6px);
+  padding: 0 14px 0 10px;
+  border: 1px solid var(--cp-outline);
+  border-radius: calc((var(--ib) - 6px) / 2);
+  background: transparent;
+  font-size: calc(var(--fs) - 2px);
+  font-weight: 500;
+
+  @media (hover: hover) { &:hover { background: var(--cp-hover); } }
+}
+
+.sep { flex: none; height: 1px; margin: 4px 12px; background: var(--line); }
+
+.note {
+  padding: 4px 8px;
+  color: var(--text-2);
+  font-size: calc(var(--fs) - 2px);
+  line-height: 1.45;
+  text-align: center;
+
+  strong { color: var(--text); font-weight: 500; }
+}
+
+// a name in quotes, the quotes in the sentence's weight
+.quoted {
+  &::before { content: "\201C"; color: var(--text-2); font-weight: 400; }
+  &::after { content: "\201D"; color: var(--text-2); font-weight: 400; }
+}
+
+// renaming, in the row's place
+.edit {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 2px 0;
+  padding: 10px;
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.actions { display: flex; align-items: center; gap: 8px; }
+
+.spacer { flex: 1; }
+
+// pill buttons sized by the window
+.delete,
+.secondary,
+.primary,
+.danger {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--ib);
+  padding: 0 16px;
+  border: 0;
+  border-radius: calc(var(--ib) / 2);
+  font-size: var(--fs);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.delete {
+  padding: 0 14px 0 10px;
+  background: transparent;
+  color: var(--cp-err);
+
+  @media (hover: hover) { &:hover { background: var(--cp-hover); } }
+}
+
+.secondary { background: var(--surface-hover); }
+
+.primary {
+  background: var(--text);
+  color: var(--bg);
+
+  &:disabled { opacity: 0.4; cursor: default; }
+}
+
+.danger {
+  background: var(--brand);
+  color: #fff;
+
+  &:hover { background: var(--brand-hover); }
+}
+
+// "Delete …?", in the row's place
+.confirm {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 2px 0;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--surface);
+
+  strong { font-size: calc(var(--fs) + 1px); font-weight: 500; }
+  p { margin: 0; color: var(--text-2); font-size: calc(var(--fs) - 1px); line-height: 1.45; }
+}
+
+.confirmActions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 26px 24px 22px;
+  text-align: center;
+
+  strong { font-size: calc(var(--fs) + 1px); font-weight: 500; }
+  > span:last-child { max-width: 340px; color: var(--text-2); font-size: calc(var(--fs) - 2px); line-height: 1.45; }
+}
+
+.emptyIcon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 6px;
+  border-radius: 50%;
+  background: var(--surface);
+
+  svg { width: 26px; height: 26px; }
+}
+
+.foot {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px var(--pad) calc(var(--pad) - 4px);
+  border-top: 1px solid var(--line);
+
+  [data-sheet="true"] > & { padding-bottom: 30px; }
+
+}
+
+// the wide button at the bottom: "New category", "Create “…” and add"
+.make {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: calc(var(--row) - 6px);
+  border: 0;
+  border-radius: calc((var(--row) - 6px) / 2);
+  background: var(--text);
+  color: var(--bg);
+  font-size: var(--fs);
+  font-weight: 500;
+
+  &:disabled { opacity: 0.6; cursor: default; }
+}
+
+.makeQuiet { background: var(--surface); color: var(--text); }

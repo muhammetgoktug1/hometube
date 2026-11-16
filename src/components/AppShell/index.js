@@ -7,6 +7,7 @@ import Sidebar from "@/components/Sidebar";
 import TopBar from "@/components/TopBar";
 
 // Hooks
+import useCategoryEdit from "@/hooks/useCategoryEdit";
 import useDupes from "@/hooks/useDupes";
 import useKidsShell from "@/hooks/useKids";
 import useLibrarySync from "@/hooks/useLibrarySync";
@@ -27,6 +28,7 @@ const AppShell = ({ children, theater }) => {
   useDupes();
   usePlaylists();
   usePaging();
+  useCategoryEdit();
   // kids profiles: the parent lock and <html data-kids>; nothing without them
   useKidsShell();
   const sidebarToggled = useUiStore((state) => state.sidebarToggled);

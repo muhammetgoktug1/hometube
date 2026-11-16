@@ -5,6 +5,7 @@ import Link from "next/link";
 
 // Components
 import AppShell from "@/components/AppShell";
+import CategoryPicker from "@/components/CategoryPicker";
 import ChannelAvatar from "@/components/ChannelAvatar";
 import GrownUp from "@/components/GrownUp";
 import Icon from "@/components/Icon";
@@ -20,6 +21,7 @@ import UpNext from "./partials/UpNext";
 import { useKids } from "@/hooks/useKids";
 
 // Store
+import useCategoryEditStore from "@/store/useCategoryEditStore";
 import useLibraryStore from "@/store/useLibraryStore";
 
 // Utils
@@ -47,6 +49,8 @@ const Watch = () => {
   const { videos, channels, categories, loaded } = useLibraryStore();
   const video = videos.find((v) => v.id === id);
   const kids = useKids() === "locked";
+  // while the server offers category editing the category button opens the picker; until then the list box
+  const categoryEdit = useCategoryEditStore((state) => state.on);
 
   if (!video) {
     return (
@@ -95,17 +99,21 @@ const Watch = () => {
             {!kids && (
               <div className={Styles.actions}>
                 <GrownUp name="category">
-                  <label className={`btn ${Styles.category}`}>
-                    <Icon name="tag" size={20} />
-                    <select value={video.category} onChange={setCategory} aria-label="Category">
-                      <option value="">No category</option>
-                      {categories.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  {categoryEdit ? (
+                    <CategoryPicker video={video} />
+                  ) : (
+                    <label className={`btn ${Styles.category}`}>
+                      <Icon name="tag" size={20} />
+                      <select value={video.category} onChange={setCategory} aria-label="Category">
+                        <option value="">No category</option>
+                        {categories.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
                 </GrownUp>
                 <GrownUp name="youtube">
                   <a href={video.url} target="_blank" rel="noreferrer" className="btn">
